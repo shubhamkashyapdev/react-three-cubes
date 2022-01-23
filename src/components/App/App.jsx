@@ -1,14 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react'
 import './App.scss'
 import { Canvas, useFrame } from '@react-three/fiber'
+import { softShadows, OrbitControls } from '@react-three/drei'
+import { useSpring, a } from '@react-spring/three'
+
+// compoenents
 import SpinningBox from '../SpinningBox/SpinningBox'
 
 function App() {
+  softShadows()
+
   return (
     <>
-      <Canvas colorManagement camera={{ position: [-5, 2, 10], fov: 60 }}>
+      <Canvas
+        shadowMap
+        shadows
+        colorManagement
+        camera={{ position: [-5, 2, 10], fov: 60 }}
+      >
         <ambientLight intensity={0.3} />
         <directionalLight
+          castShadow
           intensity={1.5}
           position={[0, 10, 0]}
           shadow-mapSize-width={1024}
@@ -24,15 +36,25 @@ function App() {
 
         {/* floor is needed to cast the shadow */}
         <group>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -3, 0]}>
+          <mesh
+            receiveShadow
+            rotation={[-Math.PI / 2, 0, 0]}
+            position={[0, -3, 0]}
+          >
             <planeBufferGeometry attach='geometry' args={[100, 100]} />
-            <meshStandardMaterial attach='material' color='yellow' />
+            <shadowMaterial attach='material' opacity={0.3} />
           </mesh>
-        </group>
 
-        <SpinningBox position={[0, 1, 0]} color='lightblue' args={[3, 2, 1]} />
-        <SpinningBox position={[-3, 1, -5]} color='pink' />
-        <SpinningBox position={[5, 1, -1]} color='pink' />
+          <SpinningBox
+            position={[0, 1, 0]}
+            color='lightblue'
+            args={[3, 2, 1]}
+            speed={2}
+          />
+          <SpinningBox position={[-3, 1, -5]} color='pink' speed={6} />
+          <SpinningBox position={[5, 1, -1]} color='pink' speed={6} />
+        </group>
+        <OrbitControls />
       </Canvas>
     </>
   )
